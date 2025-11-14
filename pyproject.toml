@@ -1,10 +1,15 @@
 [project]
 name = "alpha-board"
 version = "0.0.0"
-description = "Add your description here"
+description = "Investing portfolio manager"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+authors = [
+    { name = "rafska", email = "" }
+]
+dependencies = [
+    "flet[all]==0.28.3",
+]
 
 [dependency-groups]
 dev = [
@@ -14,6 +19,24 @@ dev = [
     "shellcheck-py==0.11.0.1",
     "ty==0.0.1a26",
 ]
+
+[tool.flet]
+# org name in reverse domain name notation, e.g. "com.mycompany".
+# Combined with project.name to build bundle ID for iOS and Android apps
+org = "rafska"
+
+# project display name that is used as an app title on Android and iOS home screens,
+# shown in window titles and about app dialogs on desktop.
+product = "alpha-board"
+
+# company name to display in about app dialogs
+company = "rafska"
+
+# copyright text to display in about app dialogs
+copyright = "Copyright (C) 2025 by rafska"
+
+[tool.flet.app]
+path = "src"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
