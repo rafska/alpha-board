@@ -1,12 +1,14 @@
 import flet as ft
 from sidebar import Sidebar
+from data_store import DataStore
 
 
 class AppLayout(ft.Row):
-    def __init__(self, app, page: ft.Page, *args, **kwargs):
+    def __init__(self, app, page: ft.Page, store: DataStore, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.app = app
         self.page = page
+        self.store = store
         self.page.on_resized = self.page_resize
         self.toggle_nav_rail_button = ft.IconButton(
             icon=ft.Icons.ARROW_CIRCLE_LEFT,
@@ -16,7 +18,7 @@ class AppLayout(ft.Row):
             selected_icon_color=ft.Colors.BLUE_GREY_400,
             on_click=self.toggle_nav_rail,
         )
-        self.sidebar = Sidebar(self)
+        self.sidebar = Sidebar(self.app, self, self.store)
         self.controls = [self.sidebar, self.toggle_nav_rail_button]
 
     def toggle_nav_rail(self, e):
@@ -26,3 +28,9 @@ class AppLayout(ft.Row):
 
     def page_resize(self, e=None):
         self.page.update()
+
+    def hydrate_all_portfolios_view(self):
+        self.sidebar.sync_portfolio_destinations()
+
+    def portfolio_click(self, e):
+        self.sidebar.nav_change(self.store.get_portfolios().index(e.control.data))
