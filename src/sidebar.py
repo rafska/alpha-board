@@ -6,18 +6,10 @@ class Sidebar(ft.Container):
         self.app = app
         self.app_layout = app_layout
         self.store = store
-        self.nav_rail_visible = True
         self.nav_items = []
+        self.selected_index = -1
 
-        self.nav_rail = ft.NavigationRail(
-            selected_index=None,
-            label_type=ft.NavigationRailLabelType.ALL,
-            on_change=self.nav_change,
-            destinations=self.nav_items,
-            bgcolor=ft.Colors.BLUE_GREY,
-            extended=True,
-            expand=True,
-        )
+        self.portfolio_column = ft.Column([], expand=True)
 
         self.toggle_nav_rail_button = ft.IconButton(ft.Icons.ARROW_BACK)
 
@@ -44,7 +36,7 @@ class Sidebar(ft.Container):
                         ),
                         alignment=ft.alignment.center,
                     ),
-                    self.nav_rail,
+                    self.portfolio_column,
                 ],
                 tight=True,
                 expand=True,
@@ -53,49 +45,29 @@ class Sidebar(ft.Container):
             margin=ft.margin.all(0),
             width=250,
             bgcolor=ft.Colors.BLUE_GREY,
-            visible=self.nav_rail_visible,
         )
 
-    def nav_change(self, e):
-        self.nav_rail.selected_index = e.control.selected_index
+    def portfolio_select(self, e):
+        self.portfolio_column.controls[self.selected_index].selected = False
+        self.selected_index = e.control.data
+        self.portfolio_column.controls[self.selected_index].selected = True
         self.update()
 
-    def sync_portfolio_destinations(self):
+    def sync_portfolio_column(self):
         portfolios = self.store.get_portfolios()
-        self.nav_rail.destinations = []
+        self.portfolio_column.controls = []
         for i in range(len(portfolios)):
-            b = portfolios[i]
-            self.nav_rail.destinations.append(
-                ft.NavigationRailDestination(
-                    label_content=ft.TextField(
-                        value=b.name,
-                        hint_text=b.name,
-                        text_size=12,
-                        read_only=True,
-                        on_focus=self.portfolio_name_focus,
-                        on_blur=self.portfolio_name_blur,
-                        border=ft.InputBorder.NONE,
-                        height=50,
-                        width=150,
-                        text_align=ft.TextAlign.START,
+            p = portfolios[i]
+            self.portfolio_column.controls.append(
+                ft.ListTile(
+                    leading=ft.IconButton(
+                        ft.Icons.CHEVRON_RIGHT_OUTLINED,
+                        on_click=self.portfolio_select,
                         data=i,
                     ),
-                    label=b.name,
-                    selected_icon=ft.Icons.CHEVRON_RIGHT_ROUNDED,
-                    icon=ft.Icons.CHEVRON_RIGHT_OUTLINED,
+                    title=ft.Text(p.name),
+                    trailing=ft.IconButton(
+                        ft.Icons.DELETE, on_click=self.app.delete_portfolio, data=p
+                    ),
                 )
             )
-
-    def portfolio_name_focus(self, e):
-        e.control.read_only = False
-        e.control.border = ft.InputBorder.OUTLINE
-        self.page.update()
-
-    def portfolio_name_blur(self, e):
-        self.store.update_portfolio(
-            self.store.get_portfolios()[e.control.data], {"name": e.control.value}
-        )
-        self.app_layout.hydrate_all_portfolios_view()
-        e.control.read_only = True
-        e.control.border = ft.InputBorder.NONE
-        self.page.update()

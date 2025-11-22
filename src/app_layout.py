@@ -10,7 +10,7 @@ class AppLayout(ft.Row):
         self.page = page
         self.store = store
         self.page.on_resized = self.page_resize
-        self.toggle_nav_rail_button = ft.IconButton(
+        self.toggle_sidebar_button = ft.IconButton(
             icon=ft.Icons.ARROW_CIRCLE_LEFT,
             icon_color=ft.Colors.BLUE_GREY_400,
             selected=False,
@@ -19,18 +19,18 @@ class AppLayout(ft.Row):
             on_click=self.toggle_nav_rail,
         )
         self.sidebar = Sidebar(self.app, self, self.store)
-        self.controls = [self.sidebar, self.toggle_nav_rail_button]
+        self.controls = [self.sidebar, self.toggle_sidebar_button]
 
     def toggle_nav_rail(self, e):
         self.sidebar.visible = not self.sidebar.visible
-        self.toggle_nav_rail_button.selected = not self.toggle_nav_rail_button.selected
+        self.toggle_sidebar_button.selected = not self.toggle_sidebar_button.selected
         self.page.update()
 
     def page_resize(self, e=None):
         self.page.update()
 
     def hydrate_all_portfolios_view(self):
-        self.sidebar.sync_portfolio_destinations()
+        self.sidebar.sync_portfolio_column()
 
     def portfolio_click(self, e):
         self.sidebar.nav_change(self.store.get_portfolios().index(e.control.data))

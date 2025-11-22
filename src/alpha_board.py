@@ -101,6 +101,6 @@ class AlphaBoardApp(AppLayout):
         self.set_welcome_view()
 
     def set_welcome_view(self):
-        self.active_view = self.welcome_view
-        self.sidebar.nav_rail.selected_index = 0
+        self.sidebar.selected_index = -1
+        self.sidebar.sync_portfolio_column()
         self.page.update()
