@@ -19,7 +19,28 @@ class AppLayout(ft.Row):
             on_click=self.toggle_nav_rail,
         )
         self.sidebar = Sidebar(self.app, self, self.store)
-        self.controls = [self.sidebar, self.toggle_sidebar_button]
+        self.welcome_view = ft.Container(
+            content=ft.Text("Welcome back"),
+            alignment=ft.alignment.center,
+            expand=True,
+        )
+
+        self.active_view: ft.Control = self.welcome_view
+        self.controls = [self.sidebar, self.toggle_sidebar_button, self.active_view]
+
+    def set_welcome_view(self):
+        self.active_view = self.welcome_view
+        self.sidebar.selected_index = None
+        self.sidebar.sync_portfolio_column()
+        self.controls[-1] = self.active_view
+        self.page.update()
+
+    def set_portfolio_view(self, i):
+        self.active_view = self.store.get_portfolios()[i]
+        self.sidebar.selected_index = i
+        self.sidebar.sync_portfolio_column()
+        self.controls[-1] = self.active_view
+        self.page.update()
 
     def toggle_nav_rail(self, e):
         self.sidebar.visible = not self.sidebar.visible

@@ -12,9 +12,8 @@ class Portfolio(ft.Container):
         self.page = page
 
         super().__init__(
-            content=None,
+            content=ft.Text(f"Portfolio no {self.portfolio_id}"),
             data=self,
-            margin=ft.margin.all(0),
-            padding=ft.padding.only(top=10, right=0),
-            height=self.app.page.height,
+            alignment=ft.alignment.center,
+            expand=True,
         )

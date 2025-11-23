@@ -28,7 +28,7 @@ class AlphaBoardApp(AppLayout):
             ],
         )
         self.page.appbar = self.appbar
-        self.page.update()
+        self.page.on_route_change = self.route_change
         super().__init__(
             self,
             self.page,
@@ -37,6 +37,17 @@ class AlphaBoardApp(AppLayout):
             expand=True,
             vertical_alignment=ft.CrossAxisAlignment.START,
         )
+        self.page.go("/")
+
+    def route_change(self, e):
+        troute = ft.TemplateRoute(self.page.route)
+        if troute.match("/"):
+            self.set_welcome_view()
+        elif troute.match("/portfolio/:id"):
+            if int(troute.id) > len(self.store.get_portfolios()):
+                self.page.go("/")
+                return
+            self.set_portfolio_view(int(troute.id))
 
     def add_portfolio(self, e):
         def close_dlg(e):
@@ -99,8 +110,3 @@ class AlphaBoardApp(AppLayout):
     def delete_portfolio(self, e):
         self.store.remove_portfolio(e.control.data)
         self.set_welcome_view()
-
-    def set_welcome_view(self):
-        self.sidebar.selected_index = -1
-        self.sidebar.sync_portfolio_column()
-        self.page.update()

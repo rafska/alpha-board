@@ -7,7 +7,7 @@ class Sidebar(ft.Container):
         self.app_layout = app_layout
         self.store = store
         self.nav_items = []
-        self.selected_index = -1
+        self.selected_index = None
 
         self.portfolio_column = ft.Column([], expand=True)
 
@@ -48,10 +48,13 @@ class Sidebar(ft.Container):
         )
 
     def portfolio_select(self, e):
-        self.portfolio_column.controls[self.selected_index].selected = False
-        self.selected_index = e.control.data
+        index = e.control.data
+        if isinstance(self.selected_index, int):
+            self.portfolio_column.controls[self.selected_index].selected = False
+        self.selected_index = index
         self.portfolio_column.controls[self.selected_index].selected = True
-        self.update()
+        self.app.page.route = f"/portfolio/{index}"
+        self.app.page.update()
 
     def sync_portfolio_column(self):
         portfolios = self.store.get_portfolios()
@@ -71,3 +74,5 @@ class Sidebar(ft.Container):
                     ),
                 )
             )
+        if isinstance(self.selected_index, int):
+            self.portfolio_column.controls[self.selected_index].selected = True
